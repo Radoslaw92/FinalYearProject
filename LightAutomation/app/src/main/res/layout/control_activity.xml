@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Switch
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="turn ON/OFF"
+            android:id="@+id/switch1" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_marginTop="32dp"/>
+    <SeekBar
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"
+            android:layout_marginTop="33dp" android:layout_below="@+id/textView" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set brightness of light"
+            android:id="@+id/textView" android:layout_below="@+id/switch1" android:layout_centerHorizontal="true"
+            android:layout_marginTop="36dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set light on  timer"
+            android:id="@+id/textView2"
+            android:layout_marginTop="32dp" android:layout_below="@+id/seekBar" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Time Until"
+            android:id="@+id/btnUntil"
+            android:layout_below="@+id/boxUntil" android:layout_toRightOf="@+id/textView2"
+            android:layout_toEndOf="@+id/textView2"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set time From"
+            android:id="@+id/btnFrom" android:layout_alignBottom="@+id/btnUntil"
+    />
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No time specified"
+            android:id="@+id/boxUntil"
+            android:layout_below="@+id/textView4" android:layout_alignLeft="@+id/btnUntil"
+            android:layout_alignStart="@+id/btnUntil"/>
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From current time"
+            android:id="@+id/boxFrom" android:layout_above="@+id/btnFrom" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FROM"
+            android:id="@+id/textView3" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_below="@+id/textView2"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UNTIL"
+            android:id="@+id/textView4" android:layout_toRightOf="@+id/textView2"
+            android:layout_alignBottom="@+id/textView3"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From: "
+            android:id="@+id/textFrom"
+            android:layout_marginTop="39dp"
+            android:layout_below="@+id/btnFrom" android:layout_centerHorizontal="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Until: "
+            android:id="@+id/textUntil"
+            android:layout_alignLeft="@+id/textFrom"
+            android:layout_alignStart="@+id/textFrom" android:layout_below="@+id/textFrom"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textBright"
+            android:layout_below="@+id/textView" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:id="@+id/btnSend" android:layout_alignParentBottom="true" android:layout_toLeftOf="@+id/btnUntil"
+            android:layout_toStartOf="@+id/btnUntil" android:layout_marginBottom="34dp"/>
+</RelativeLayout>

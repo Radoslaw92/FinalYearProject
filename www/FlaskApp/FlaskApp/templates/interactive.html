@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<h1>siema</h1>	
+
+
+
+
+</head>
+
+
+
+<body>
+<script>
+
+var getData = $.get('/data');
+
+getData.done(function(results){
+
+var randomnumber = Math.floor(Math.random() * 100);
+
+$("#power").text(results.results + ' ' + randomnumber);
+
+});
+
+function readFromDb() {
+
+var readData = $.get('/data');
+
+readData.done(function(results) {
+
+
+$("#power2").text(results.results + ' current');
+
+
+});
+}
+
+setInterval(readFromDb,2000);
+
+readFromDb();
+
+</script>
+<p id="power"></p>
+<h1 id="power2"></h1>
+</body>
+</html>

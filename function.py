@@ -5,6 +5,7 @@ import datetime
 import MySQLdb
 from Subfact_ina219 import INA219
 import RPi.GPIO as GPIO
+from threading import Thread
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -15,20 +16,8 @@ GPIO.setup(37, GPIO.OUT)
 
 ina = INA219(address=int('0x40',16))
 
-#def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn):
-#    if lightStatus == 1:
-#        if lightTurnOn == 1:
-#            GPIO.output(13, 0)
-#        elif lightTurnOn == 2:
-#            GPIO.output(16, 0)
-#        elif lightTurnOn == 2:
-#            GPIO.output(18, 0)
-#        print "light status =="
-#        print lightStatus
-
-
-GPIO.output(16,0)
-GPIO.output(13,0)
+#GPIO.output(16,0)
+#GPIO.output(13,0)
 
 
 pwm = GPIO.PWM(13,80)
@@ -40,7 +29,53 @@ pwm2.start(0)
 pwm3 = GPIO.PWM(18,80)
 pwm3.start(0)
 
+def powerConsuption():
+    #while True:
+	
+    gpioLights = [13,16,18]
+    lightOn = 0
+    lightOff = 0  
+    
+    #BUG HERE LIGHT ON WONT INCREMENT IF BRIGHTNESS IS SET TO BE VERY LOW  
+    for num in gpioLights:
+        if(GPIO.input(num) == 1):
+            lightOn += 1
+               
+        else:
+            lightOff += 1
+        
+        
+    dba = MySQLdb.connect("localhost","root","password","energy")
+    cursor = dba.cursor()
+    
+    humidity, temperature = Adafruit_DHT.read_retry(11, 4) 
+    busVoltage = ina.getBusVoltage_V()
+    
+    temp = 0
 
+    #for loop to get average of the current from 100 samples.
+    for x in range(1,100):
+        temp += ina.getCurrent_mA()
+    current = temp/99
+    power = busVoltage * current/1000
+    kwh = 0.000000277 * power
+    wh = pow(2.77777777778,-4) * power
+    print "no siema"    
+    try:
+        cursor.execute("UPDATE power SET volt=%s, current=%s, watt=%s, kwh=%s, wh=%s, humidity=%s, temperature=%s, on_light=%s, off_light=%s WHERE ID = 1", (busVoltage, current, power, kwh, wh, humidity, temperature, lightOn, lightOff))
+        dba.commit()
+    except MySQLdb.Error, e:
+        print e
+    cursor.close()
+    del cursor
+    dba.close()
+    #time.sleep(0.2)
+
+#set thread constructor. target to powerConsuption. this function send energy usage on seperate thread
+#t1 = Thread(target = powerConsuption)
+
+#start thread
+#t1.start()
 
 ######BUG IN THE FUNCTION NEED TO BE FIXED!############TIMESTAMP ISSUE CAN'T CONVERT IF NULL IS PASSED!!#####
 def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn):
@@ -165,8 +200,9 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
             pwm3.ChangeDutyCycle(0)
         
 
-
 while True:
+
+    #t1.start()
 
     db = MySQLdb.connect("localhost","root","password","light_control")
 
@@ -176,12 +212,25 @@ while True:
     sqlStatus = "SELECT * FROM status where ID = '%d'" %(1)
     sqlFrom = "SELECT * FROM time_from where ID = '%d'" %(1)
     sqlUntil = "SELECT * FROM time_until where ID = '%d'" %(1)
- 
-
+    
+    
+    #humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+    #busVoltage = ina.getBusVoltage_V()
+    #current = ina.getCurrent_mA()
+    #power = busVoltage * current/1000
+    #kwh = 0.000000277 * power
+    #wh = pow(2.77777777778,-4) * power
+   
     try:
+        #cursor.execute("UPDATE power SET volt=%s, current=%s, watt=%s, kwh=%s, wh=%s WHERE ID = 1", (busVoltage, current, power, kwh, wh))
+        #db.commit()
+
+        lightOn = 0
+        lightOff = 0
+
         cursor.execute(sqlBright)
         results = cursor.fetchall()
-        for brightness in results:
+        for brightness in results:   
             bright1 = brightness[1]
             bright2 = brightness[2]
             bright3 = brightness[3]
@@ -218,16 +267,23 @@ while True:
           
         for x in range(1,4):
             controlLight(brightness[x], lightStatus[x], timeFrom[x], until[x], x)
+            #powerConsuption()
             #print "eniu co tam"
             #print brightness[x]
+        powerConsuption()
         #print "siema ---> "
         #print brightness[1]
 
         #print " "
 
-    except:
-        print "Cant get data from DataBase"
+    except MySQLdb.Error, e:
+        print e
 
-    #time.sleep(0.2);    
+
+    cursor.close()
+    del cursor
+    db.close()
+
+    #time.sleep(1);    
     #print " "
     #print " "

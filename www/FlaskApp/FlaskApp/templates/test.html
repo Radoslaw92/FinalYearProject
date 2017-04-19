@@ -1,0 +1,29 @@
+<html>
+<body>
+
+
+
+
+<ul style="line-height: 3.5;">
+
+<script>
+
+setTimeout(function(){
+    ('/test').reload();
+},1000);
+
+</script>
+
+
+{% for r in result %}
+<li> Volts:    {{r.volt}}</li>
+<li> Current   {{r.current}}</li>
+<li>Watts:     {{r.watt}}</li>
+<li>kwh:       {{r.kwh}}</li>
+<li>wh:        {{r.wh}}</li>
+{% endfor %}
+
+</ul>
+</body>
+</html>
+

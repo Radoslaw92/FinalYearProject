@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	 
+	<meta charset="utf-8">
+	<title>Power Consuption</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='home.ico') }}">
+
+</head>
+
+
+<header>
+	<div id="head" style="height:50px; width=100%; font-size:50px;">
+	<div class="navbar-header">
+        	<a class="navbar-brand" href="/">
+	    	<img style="width:80px; margin-top: -15px; margin-left: -15px; height:45px;" src="{{ url_for('static', filename='images/electro.jpg') }}">
+		</a>
+    	 </div>
+        </div>
+
+</header>
+
+<body>
+
+
+<a href='test.html'>Test</a>
+
+
+<div id="profile2">
+
+<h1>kurczak</h1>
+
+</div>
+
+<div>
+
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs nav-justified" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Power Consuption</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Power usage diagrams</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">About Project</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+<div class="tab-content">
+	<div role="tabpanel" class="tab-pane face in active" id="home">
+		home page
+	</div>
+
+
+
+
+	
+	<div role="tabpanel" class="tab-pane fade" id="profile">
+        <div class="row">
+                <div class="col-xs-4">
+		<p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Current power consuption</p>
+                <img style="width:280px; margin-top: 45px; margin-left: 0px; height:245px;" src="{{ url_for('static', filename='images/power.png') }}">
+                
+		<ul style="line-height: 3.5; margin-left: 30px; font-weight: bold;">
+
+                        <li id="volt"></li>
+                        <li id="current"></li>
+                        <li id="watt"></li>
+                        <li id="kwh"></li>
+                        <li id="wh"></li>
+
+
+                </ul>
+
+		</div>
+                
+
+
+		<div class="col-xs-4">
+                <p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Lights ON/OFF</p>
+                <img style="width:280px; margin-top: 45px; margin-left: -30px; height:245px;" src="{{ url_for('static', filename='images/bulb.png') }}">
+
+                  <ul style="line-height: 3.5; margin-left: 30px; font-weight: bold;">
+
+                        <li id="on"></li>
+                        <li id="off"></li>
+
+
+                </ul>
+
+                </div>
+
+		<div class="col-xs-4">
+		<p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Sensors readings</p>
+                <img style="width:280px; margin-top: 45px; margin-left: 0px; height:245px;" src="{{ url_for('static', filename='images/snow.png') }}">
+                
+                <ul style="line-height: 3.5; margin-left: 30px; font-weight: bold;">
+
+                	<li id="temp"></li>
+                        <li id="hum"></li>
+
+
+                </ul>
+
+                </div>
+
+        </div>
+        </div>
+
+    <div role="tabpanel" class="tab-pane fade" id="messages">elo</div>
+    <div role="tabpanel" class="tab-pane fade" id="settings">eniu</div>
+  </div>
+
+</div>
+
+
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<script>
+
+var getData = $.get('/data');
+
+getData.done(function(results){
+
+var randomnumber = Math.floor(Math.random() * 100);
+
+$("#power").text(results.results + ' ' + randomnumber);
+
+});
+
+function readFromDb() {
+
+var readData = $.get('/data');
+
+readData.done(function(data) {
+
+
+$("#volt").text("Volts: " + data.volt);
+$("#current").text('Current: ' + data.current + " mA");
+$("#watt").text("Watts: " + data.watt);
+$("#kwh").text("Kwh: " + data.kwh);
+$("#wh").text("Wh: " + data.wh);
+$("#on").text("Light On: " + data.onLight);
+$("#off").text("Light Off: " + data.offLight);
+$("#temp").text("Current Temperature: " + data.temperature);
+$("#hum").text("Current Humiditye: " + data.humidity + "%");
+
+
+});
+}
+
+setInterval(readFromDb,2000);
+
+readFromDb();
+
+</script>
+
+
+</body>
+</html>
