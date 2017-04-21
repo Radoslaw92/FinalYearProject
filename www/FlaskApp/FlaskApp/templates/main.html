@@ -41,7 +41,7 @@
   <ul class="nav nav-tabs nav-justified" role="tablist">
     <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
     <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Power Consuption</a></li>
-    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Power usage diagrams</a></li>
+    <li role="presentation"><a href="#timer" aria-controls="timer" role="tab" data-toggle="tab">Power usage diagrams</a></li>
     <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">About Project</a></li>
   </ul>
 
@@ -58,7 +58,7 @@
 	<div role="tabpanel" class="tab-pane fade" id="profile">
         <div class="row">
                 <div class="col-xs-4">
-		<p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Current power consuption</p>
+		<p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Power Consuption</p>
                 <img style="width:280px; margin-top: 45px; margin-left: 0px; height:245px;" src="{{ url_for('static', filename='images/power.png') }}">
                 
 		<ul style="line-height: 3.5; margin-left: 30px; font-weight: bold;">
@@ -107,8 +107,115 @@
         </div>
         </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="messages">elo</div>
-    <div role="tabpanel" class="tab-pane fade" id="settings">eniu</div>
+    <div role="tabpanel" class="tab-pane fade" id="timer">
+
+     <div class="row">
+                <div class="col-xs-3">
+		<p style="margin-top: 45px; font-weight: bold; margin-left: 50px; font-size:20px;"> Light</p>
+                
+		<ul style="line-height: 3.5; margin-left: 30px; font-weight: bold;">
+
+                        <li> LIGHT 1 </li>
+                        <li> LIGHT 2 </li>
+                        <li> LIGHT 3 </li>
+                        <li> LIGHT 4 </li>
+                        <li> LIGHT 5 </li>
+                        <li> LIGHT 6 </li>
+                        <li> LIGHT 7 </li>
+                        <li> LIGHT 8 </li>
+                        <li> LIGHT 9 </li>
+                        <li> LIGHT 10 </li>
+                        <li> LIGHT 11 </li>
+                        <li> LIGHT 12 </li>
+                        <li> LIGHT 13 </li>
+
+                </ul>
+
+		</div>
+                
+
+
+		<div class="col-xs-3">
+                <p style="margin-top: 45px; font-weight: bold; font-size:20px;"> timer From</p>
+
+                  <ul style="line-height: 3.5; list-style: none; font-weight: bold;">
+
+                        <li id="lightFrom1"></li>
+                        <li id="lightFrom2"></li>
+			<li id="lightFrom3"></li>
+                        <li id="lightFrom4"></li>
+			<li id="lightFrom5"></li>
+                        <li id="lightFrom6"></li>
+                        <li id="lightFrom7"></li>
+                        <li id="lightFrom8"></li>
+			<li id="lightFrom9"></li>
+                        <li id="lightFrom10"></li>
+                        <li id="lightFrom11"></li>
+                        <li id="lightFrom12"></li>
+			<li id="lightFrom13"></li>
+
+
+                </ul>
+
+                </div>
+
+		<div class="col-xs-3">
+		<p style="margin-top: 45px; font-weight: bold; font-size:20px;"> Timer Until</p>
+                                
+                <ul style="line-height: 3.5; font-weight: bold;">
+
+                	<li id="lightUntil1"></li>
+                        <li id="lightUntil2"></li>
+                        <li id="lightUntil3"></li>
+                        <li id="lightUntil4"></li>
+                        <li id="lightUntil5"></li>
+                        <li id="lightUntil6"></li>
+                        <li id="lightUntil7"></li>
+                        <li id="lightUntil8"></li>
+                        <li id="lightUntil9"></li>
+                        <li id="lightUntil10"></li>
+                        <li id="lightUntil11"></li>
+                        <li id="lightUntil12"></li>
+                        <li id="lightUntil13"></li>
+
+
+                </ul>
+
+                </div>
+
+                <div class="col-xs-3">
+                <p style="margin-top: 45px; font-weight: bold;  font-size:20px;"> Light On/Off</p>
+
+                <ul style="line-height: 3.5;  font-weight: bold;">
+
+                        <li id="lightStatus1"></li>
+                        <li id="lightStatus2"></li>
+                        <li id="lightStatus3"></li>
+                        <li id="lightStatus4"></li>
+                        <li id="lightStatus5"></li>
+                        <li id="lightStatus6"></li>
+                        <li id="lightStatus7"></li>
+                        <li id="lightStatus8"></li>
+                        <li id="lightStatus9"></li>
+                        <li id="lightStatus10"></li>
+                        <li id="lightStatus11"></li>
+                        <li id="lightStatus12"></li>
+                        <li id="lightStatus13"></li>
+
+                </ul>
+
+                </div>
+
+
+        </div>
+
+
+
+    </div>
+   
+
+
+   <div role="tabpanel" class="tab-pane fade" id="settings">eniu</div>
   </div>
 
 </div>
@@ -155,6 +262,60 @@ setInterval(readFromDb,2000);
 
 readFromDb();
 
+</script>
+
+<script>
+
+function readTimerFrom() {
+$("#light1").text("SIEMA ENIU JESTEMA W DUPIE");
+var readData = $.get('/dataFrom');
+readData.done(function(dataFrom) {
+$("#lightFrom1").text(dataFrom.light1);
+$("#lightFrom2").text(dataFrom.light2);
+$("#lightFrom3").text(dataFrom.light3);
+$("#lightFrom4").text(dataFrom.light4);
+$("#lightFrom5").text(dataFrom.light5);
+$("#lightFrom6").text(dataFrom.light6);
+$("#lightFrom7").text(dataFrom.light7);
+$("#lightFrom8").text(dataFrom.light8);
+$("#lightFrom9").text(dataFrom.light9);
+$("#lightFrom10").text(dataFrom.light10);
+$("#lightFrom11").text(dataFrom.light11);
+$("#lightFrom12").text(dataFrom.light12);
+$("#lightFrom13").text(dataFrom.light13);
+
+$("#lightUntil1").text(dataFrom.lightUntil1);
+$("#lightUntil2").text(dataFrom.lightUntil2);
+$("#lightUntil3").text(dataFrom.lightUntil3);
+$("#lightUntil4").text(dataFrom.lightUntil4);
+$("#lightUntil5").text(dataFrom.lightUntil5);
+$("#lightUntil6").text(dataFrom.lightUntil6);
+$("#lightUntil7").text(dataFrom.lightUntil7);
+$("#lightUntil8").text(dataFrom.lightUntil8);
+$("#lightUntil9").text(dataFrom.lightUntil9);
+$("#lightUntil10").text(dataFrom.lightUntil10);
+$("#lightUntil11").text(dataFrom.lightUntil11);
+$("#lightUntil12").text(dataFrom.lightUntil12);
+$("#lightUntil13").text(dataFrom.lightUntil13);
+
+$("#lightStatus1").text(dataFrom.status1);
+$("#lightStatus2").text(dataFrom.status2);
+$("#lightStatus3").text(dataFrom.status3);
+$("#lightStatus4").text(dataFrom.status4);
+$("#lightStatus5").text(dataFrom.status5);
+$("#lightStatus6").text(dataFrom.status6);
+$("#lightStatus7").text(dataFrom.status7);
+$("#lightStatus8").text(dataFrom.status8);
+$("#lightStatus9").text(dataFrom.status9);
+$("#lightStatus10").text(dataFrom.status10);
+$("#lightStatus11").text(dataFrom.status11);
+$("#lightStatus12").text(dataFrom.status12);
+$("#lightStatus13").text(dataFrom.status13);
+
+});
+}
+setInterval(readTimerFrom,2000);
+readTimerFrom();
 </script>
 
 

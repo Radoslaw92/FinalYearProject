@@ -23,31 +23,11 @@ if (isset($_POST['brightness']) && isset($_POST['status']) && isset($_POST['Time
     //$result = mysql_query("INSERT INTO Parts(Name, part_nr) VALUES('$Name', '$part_nr')");
     
     //insert into right columnt depending which light has been used.
-    if($light == 'light1')
-    {
-    	$result = mysql_query("UPDATE brightness SET light_1 = '$brightness' WHERE ID = '1'"); 
-    	$result = mysql_query("UPDATE status SET light_1 = '$status' WHERE ID = '1'");
-    	$result = mysql_query("UPDATE time_from  SET light_1 = '$Time_From' WHERE ID = '1'");
-    	$result = mysql_query("UPDATE time_until SET light_1 = '$Time_Until' WHERE ID = '1'");
-    }
-    
-    else if($light == 'light2')
-    {
-    	$result = mysql_query("UPDATE brightness SET light_2 = '$brightness' WHERE ID = '1'");
-    	$result = mysql_query("UPDATE status SET light_2 = '$status' WHERE ID = '1'");
-    	$result = mysql_query("UPDATE time_from  SET light_2 = '$Time_From' WHERE ID = '1'");
-    	$result = mysql_query("UPDATE time_until SET light_2 = '$Time_Until' WHERE ID = '1'");
-    }
-    
-    else if($light == 'light3')
-    {
-        $result = mysql_query("UPDATE brightness SET light_3 = '$brightness' WHERE ID = '1'");
-        $result = mysql_query("UPDATE status SET light_3 = '$status' WHERE ID = '1'");
-        $result = mysql_query("UPDATE time_from  SET light_3 = '$Time_From' WHERE ID = '1'");
-        $result = mysql_query("UPDATE time_until SET light_3 = '$Time_Until' WHERE ID = '1'");
-    }
-
-
+	
+      $result = mysql_query("UPDATE brightness SET $light = '$brightness' WHERE ID = '1'");
+      $result = mysql_query("UPDATE status SET $light = '$status' WHERE ID = '1'");
+      $result = mysql_query("UPDATE time_from  SET $light = '$Time_From' WHERE ID = '1'");
+      $result = mysql_query("UPDATE time_until SET $light = '$Time_Until' WHERE ID = '1'");
 
     // check if row inserted or not
     if ($result) {

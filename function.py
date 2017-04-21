@@ -1,7 +1,8 @@
 import sys
 import Adafruit_DHT
 import time
-import datetime
+import datetime 
+from datetime import timedelta
 import MySQLdb
 from Subfact_ina219 import INA219
 import RPi.GPIO as GPIO
@@ -30,52 +31,82 @@ pwm3 = GPIO.PWM(18,80)
 pwm3.start(0)
 
 def powerConsuption():
-    #while True:
-	
-    gpioLights = [13,16,18]
-    lightOn = 0
-    lightOff = 0  
-    
-    #BUG HERE LIGHT ON WONT INCREMENT IF BRIGHTNESS IS SET TO BE VERY LOW  
-    for num in gpioLights:
-        if(GPIO.input(num) == 1):
-            lightOn += 1
-               
-        else:
-            lightOff += 1
+    while True:
+   
         
-        
-    dba = MySQLdb.connect("localhost","root","password","energy")
-    cursor = dba.cursor()
+        dba = MySQLdb.connect("localhost","root","password","energy")
+        cursor = dba.cursor()
     
-    humidity, temperature = Adafruit_DHT.read_retry(11, 4) 
-    busVoltage = ina.getBusVoltage_V()
+        humidity, temperature = Adafruit_DHT.read_retry(11, 4) 
+        busVoltage = ina.getBusVoltage_V()
     
-    temp = 0
+        temp = 0
 
-    #for loop to get average of the current from 100 samples.
-    for x in range(1,100):
-        temp += ina.getCurrent_mA()
-    current = temp/99
-    power = busVoltage * current/1000
-    kwh = 0.000000277 * power
-    wh = pow(2.77777777778,-4) * power
-    print "no siema"    
+        #for loop to get average of the current from 100 samples.
+        for x in range(0,19):
+            temp += ina.getCurrent_mA()
+        current = temp/20
+        power = busVoltage * current/1000
+        kwh = 0.000000277 * power
+        wh = pow(2.77777777778,-4) * power
+        #print "no siema"    
+        try:
+            cursor.execute("UPDATE power SET volt=%s, current=%s, watt=%s, kwh=%s, wh=%s, humidity=%s, temperature=%s, on_light=%s, off_light=%s WHERE ID = 1", (busVoltage, current, power, kwh, wh, humidity, temperature, lightOn, lightOff))
+            dba.commit()
+        except MySQLdb.Error, e:
+            print e
+        cursor.close()
+        del cursor
+        dba.close()
+    #time.sleep(0.2)
+
+#set thread constructor. target to powerConsuption. this function send energy usage on seperate thread
+t1 = Thread(target = powerConsuption)
+
+#start thread
+t1.start()
+
+#function to update database status and brightnes when timer time elapse or when timer is started
+def sendStatus(light, status):
+    
+    #"UPDATE status SET $light = '$status' WHERE ID = '1'"
+    #sql = "UPDATE status SET light_" + lightToString + " = " + status + " WHERE ID = 1"
+    sqlStatus = "UPDATE status SET light_" + str(light) + " = " + status + " WHERE ID = 1"
+    sqlBright = "UPDATE brightness SET light_" + str(light) + " = " + status + " WHERE ID = 1"
+    dba = MySQLdb.connect("localhost","root","password","light_control")
+    cursor = dba.cursor()
     try:
-        cursor.execute("UPDATE power SET volt=%s, current=%s, watt=%s, kwh=%s, wh=%s, humidity=%s, temperature=%s, on_light=%s, off_light=%s WHERE ID = 1", (busVoltage, current, power, kwh, wh, humidity, temperature, lightOn, lightOff))
+        cursor.execute(sqlStatus)
+        dba.commit()
+        if status == '0':
+            cursor.execute(sqlBright)
+            dba.commit()
+    except MySQLdb.Error, e:
+        print e
+    cursor.close()
+    del cursor
+    dba.close()
+
+#reset timer in database when time elapsed
+def resetTimer(light):
+
+    #"UPDATE status SET $light = '$status' WHERE ID = '1'"
+    #sql = "UPDATE status SET light_" + lightToString + " = " + status + " WHERE ID = 1"
+    sqlTimeFrom = "UPDATE time_from SET light_" + str(light) + " = 0 WHERE ID = 1"
+    sqlTimeUntil = "UPDATE time_until SET light_" + str(light) + " = 0 WHERE ID = 1"
+    dba = MySQLdb.connect("localhost","root","password","light_control")
+    cursor = dba.cursor()
+    try:
+        cursor.execute(sqlTimeFrom)
+        dba.commit()
+        cursor.execute(sqlTimeUntil)
         dba.commit()
     except MySQLdb.Error, e:
         print e
     cursor.close()
     del cursor
     dba.close()
-    #time.sleep(0.2)
 
-#set thread constructor. target to powerConsuption. this function send energy usage on seperate thread
-#t1 = Thread(target = powerConsuption)
-
-#start thread
-#t1.start()
 
 ######BUG IN THE FUNCTION NEED TO BE FIXED!############TIMESTAMP ISSUE CAN'T CONVERT IF NULL IS PASSED!!#####
 def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn):
@@ -94,27 +125,23 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 else:    
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
                
-                dtime = datetime.datetime.now() 
+                #dtime = datetime.datetime.now() 
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime 
                 currentTimeUnix = time.mktime(dtime.timetuple())
                 
-                if currentTimeUnix >= timeFromUnix:
-    
-                    if int(lightBrightness) < 1:
-                        lightBrightness = 100  
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')  
                     pwm.ChangeDutyCycle(int(lightBrightness))
 
-                if currentTimeUnix >= timeUntilUnix and timeUntil != '0':
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
                     pwm.ChangeDutyCycle(0)
             
             #if brightness or status is selected on android app
             if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
-               
-                if int(lightBrightness) < 1:
-                    lightBrightness = 100
                 pwm.ChangeDutyCycle(int(lightBrightness))
-
-            #if int(lightStatus) == 0 and int(lightBrightness) == 0 and int(timeFrom) == 0 and int(timeUntil) == 0:
-                #pwm.ChangeDutyCycle(0)
 
         else: 
             pwm.ChangeDutyCycle(0)
@@ -270,7 +297,7 @@ while True:
             #powerConsuption()
             #print "eniu co tam"
             #print brightness[x]
-        powerConsuption()
+        #powerConsuption()
         #print "siema ---> "
         #print brightness[1]
 
