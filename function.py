@@ -10,10 +10,21 @@ from threading import Thread
 
 GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(13, GPIO.OUT)
-GPIO.setup(16, GPIO.OUT)
-GPIO.setup(18, GPIO.OUT)
+GPIO.setup(40, GPIO.OUT)
+GPIO.setup(38, GPIO.OUT)
 GPIO.setup(37, GPIO.OUT)
+
+GPIO.setup(36, GPIO.OUT)
+GPIO.setup(35, GPIO.OUT)
+GPIO.setup(33, GPIO.OUT)
+
+GPIO.setup(31, GPIO.OUT)
+GPIO.setup(29, GPIO.OUT)
+GPIO.setup(26, GPIO.OUT)
+
+GPIO.setup(24, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
 
 ina = INA219(address=int('0x40',16))
 
@@ -21,14 +32,35 @@ ina = INA219(address=int('0x40',16))
 #GPIO.output(13,0)
 
 
-pwm = GPIO.PWM(13,80)
+pwm = GPIO.PWM(40,80)
 pwm.start(0)
-
-pwm2 = GPIO.PWM(16,80)
+pwm2 = GPIO.PWM(38,80)
 pwm2.start(0)
-
-pwm3 = GPIO.PWM(18,80)
+pwm3 = GPIO.PWM(37,80)
 pwm3.start(0)
+
+pwm4 = GPIO.PWM(36,80)
+pwm4.start(0)
+pwm5 = GPIO.PWM(35,80)
+pwm5.start(0)
+pwm6 = GPIO.PWM(33,80)
+pwm6.start(0)
+
+pwm7 = GPIO.PWM(31,80)
+pwm7.start(0)
+pwm8 = GPIO.PWM(29,80)
+pwm8.start(0)
+pwm9 = GPIO.PWM(26,80)
+pwm9.start(0)
+
+pwm10 = GPIO.PWM(24,80)
+pwm10.start(0)
+pwm11 = GPIO.PWM(23,80)
+pwm11.start(0)
+pwm12 = GPIO.PWM(22,80)
+pwm12.start(0)
+lightOnCount = 0
+lightOnValue = 0
 
 def powerConsuption():
     while True:
@@ -41,7 +73,8 @@ def powerConsuption():
         busVoltage = ina.getBusVoltage_V()
     
         temp = 0
-
+        lightOn = lightOnValue
+        lightOff = 12 - lightOnValue
         #for loop to get average of the current from 100 samples.
         for x in range(0,19):
             temp += ina.getCurrent_mA()
@@ -108,7 +141,7 @@ def resetTimer(light):
     dba.close()
 
 
-######BUG IN THE FUNCTION NEED TO BE FIXED!############TIMESTAMP ISSUE CAN'T CONVERT IF NULL IS PASSED!!#####
+##controling lights##
 def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn):
     if lightTurnOn == 1:
     
@@ -147,7 +180,6 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
             pwm.ChangeDutyCycle(0)
 
     elif lightTurnOn == 2:
-
         if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
             #if timer is selected on the andriod app
             if timeFrom != '0' or timeUntil != '0':
@@ -161,32 +193,163 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 else:
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
 
-                dtime = datetime.datetime.now()
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
                 currentTimeUnix = time.mktime(dtime.timetuple())
 
-                if currentTimeUnix >= timeFromUnix:
-
-                    if int(lightBrightness) < 1:
-                        lightBrightness = 100
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
                     pwm2.ChangeDutyCycle(int(lightBrightness))
 
-                if currentTimeUnix >= timeUntilUnix and timeUntil != '0':
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
                     pwm2.ChangeDutyCycle(0)
 
             #if brightness or status is selected on android app
             if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
-
-                if int(lightBrightness) < 1:
-                    lightBrightness = 100
                 pwm2.ChangeDutyCycle(int(lightBrightness))
-
-            #if int(lightStatus) == 0 and int(lightBrightness) == 0 and int(timeFrom) == 0 and int(timeUntil) == 0:
-                #pwm.ChangeDutyCycle(0)
-
         else:
-            pwm2.ChangeDutyCycle(0)
-
+             pwm2.ChangeDutyCycle(0)
+        
     elif lightTurnOn == 3:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm3.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm3.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm3.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm3.ChangeDutyCycle(0)
+       
+    elif lightTurnOn == 4:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm4.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm4.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm4.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm4.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 5:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm5.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm5.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm5.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm5.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 6:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm6.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm6.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm6.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm6.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 7:
 
         if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
             #if timer is selected on the andriod app
@@ -201,31 +364,197 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 else:
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
 
-                dtime = datetime.datetime.now()
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
                 currentTimeUnix = time.mktime(dtime.timetuple())
 
-                if currentTimeUnix >= timeFromUnix:
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm7.ChangeDutyCycle(int(lightBrightness))
 
-                    if int(lightBrightness) < 1:
-                        lightBrightness = 100
-                    pwm3.ChangeDutyCycle(int(lightBrightness))
-
-                if currentTimeUnix >= timeUntilUnix and timeUntil != '0':
-                    pwm3.ChangeDutyCycle(0)
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm7.ChangeDutyCycle(0)
 
             #if brightness or status is selected on android app
             if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
-
-                if int(lightBrightness) < 1:
-                    lightBrightness = 100
-                pwm3.ChangeDutyCycle(int(lightBrightness))
-
-            #if int(lightStatus) == 0 and int(lightBrightness) == 0 and int(timeFrom) == 0 and int(timeUntil) == 0:
-                #pwm.ChangeDutyCycle(0)
+                pwm7.ChangeDutyCycle(int(lightBrightness))
 
         else:
-            pwm3.ChangeDutyCycle(0)
-        
+            pwm7.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 8:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm8.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm8.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm8.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm8.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 9:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm9.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm9.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm9.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm9.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 10:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm10.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm10.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm10.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm10.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 11:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm11.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm11.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm11.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm11.ChangeDutyCycle(0)
+
+    elif lightTurnOn == 12:
+        if int(lightStatus) == 1 or int(lightBrightness) > 0 or timeFrom != '0' or timeUntil != '0':
+            #if timer is selected on the andriod app
+            if timeFrom != '0' or timeUntil != '0':
+
+                if timeFrom == '0':
+                    timeFromUnix = 0
+                else:
+                    timeFromUnix = int(time.mktime(time.strptime(timeFrom, '%Y/%m/%d %H:%M:%S' )))
+                if timeUntil == '0':
+                    timeUntilUnix = 0
+                else:
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+
+                #dtime = datetime.datetime.now()
+                dtime = datetime.datetime.now() + timedelta(hours=1)
+                print dtime
+                currentTimeUnix = time.mktime(dtime.timetuple())
+
+                if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    sendStatus(lightTurnOn, '1')
+                    pwm12.ChangeDutyCycle(int(lightBrightness))
+
+                if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    resetTimer(lightTurnOn)
+                    sendStatus(lightTurnOn, '0')
+                    pwm12.ChangeDutyCycle(0)
+
+            #if brightness or status is selected on android app
+            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+                pwm12.ChangeDutyCycle(int(lightBrightness))
+        else:
+             pwm12.ChangeDutyCycle(0)
+
 
 while True:
 
@@ -261,11 +590,15 @@ while True:
             bright1 = brightness[1]
             bright2 = brightness[2]
             bright3 = brightness[3]
-            #bright.append(brightness[1])
-            #bright.append(brightness[2])
-            #bright.append(brightness[3])
-            #print "BRIGHTNESS1 = %s,BRIGHTNESS2 = %s, BRIGHTNESS3 = %s" % (bright1, bright2, bright3 )
-
+            bright4 = brightness[4]
+            bright5 = brightness[5]
+            bright6 = brightness[6]
+            bright7 = brightness[7]
+            bright8 = brightness[8]
+            bright9 = brightness[9]
+            bright10 = brightness[10]
+            bright11 = brightness[11]
+            bright12 = brightness[12]
 
         cursor.execute(sqlStatus)
         results = cursor.fetchall()
@@ -273,7 +606,21 @@ while True:
             status1 = lightStatus[1]
             status2 = lightStatus[2]
             status3 = lightStatus[3]
-            #print "STATUS1 = %s,STATUS2 = %s, STATUS3 = %s" % (status1, status2, status3 )
+            status4 = lightStatus[4]
+            status5 = lightStatus[5]
+            status6 = lightStatus[6]
+            status7 = lightStatus[7]
+            status8 = lightStatus[8]
+            status9 = lightStatus[9]
+            status10 = lightStatus[10]
+            status11 = lightStatus[11]
+            status12 = lightStatus[12]
+        
+        for i in xrange(len(lightStatus)):
+            if lightStatus[i] == '1':
+                lightOnCount += 1 
+        lightOnValue = lightOnCount
+        lightOnCount = 0  
 
         cursor.execute(sqlFrom)
         results = cursor.fetchall()
@@ -281,6 +628,17 @@ while True:
             from1 = timeFrom[1]
             from2 = timeFrom[2]
             from3 = timeFrom[3]
+            from4 = timeFrom[4]
+            from5 = timeFrom[5]
+            from6 = timeFrom[6]
+            from7 = timeFrom[7]
+            from8 = timeFrom[8]
+            from9 = timeFrom[9]
+            from10 = timeFrom[10]
+            from11 = timeFrom[11]
+            from12 = timeFrom[12]
+
+
             #print "timeFrom1 = %s timeFrom = %s, timeFrom3 = %s" % (from1, from2, from3 )
 
 
@@ -290,19 +648,20 @@ while True:
             until1 = until[1]
             until2 = until[2]
             until3 = until[3]
-            #print "timeUntil1 = %s timeUntil2 = %s, timeUntil3 = %s" % (until1, until2, until3 )
+            until4 = until[4]
+            until5 = until[5]
+            until6 = until[6]
+            until7 = until[7]
+            until8 = until[8]
+            until9 = until[9]
+            until10 = until[10]
+            until11 = until[11]
+            until12 = until[12]
+
           
-        for x in range(1,4):
+        for x in range(1,13):
             controlLight(brightness[x], lightStatus[x], timeFrom[x], until[x], x)
-            #powerConsuption()
-            #print "eniu co tam"
-            #print brightness[x]
-        #powerConsuption()
-        #print "siema ---> "
-        #print brightness[1]
-
-        #print " "
-
+ 
     except MySQLdb.Error, e:
         print e
 
@@ -311,6 +670,4 @@ while True:
     del cursor
     db.close()
 
-    #time.sleep(1);    
-    #print " "
-    #print " "
+
