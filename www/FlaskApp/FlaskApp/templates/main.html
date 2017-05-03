@@ -34,8 +34,7 @@
   <ul class="nav nav-tabs nav-justified" role="tablist" style="margin-top: 60px;">
     <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
     <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Power Consuption</a></li>
-    <li role="presentation"><a href="#timer" aria-controls="timer" role="tab" data-toggle="tab">Power usage diagrams</a></li>
-    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">About Project</a></li>
+    <li role="presentation"><a href="#timer" aria-controls="timer" role="tab" data-toggle="tab">Power usage diagrams</a></li> 
   </ul>
 
  <!-- HOME PAGE WITH SLIDESHOW***START*** -->
@@ -120,7 +119,7 @@
                         <li id="current"></li>
                         <li id="watt"></li>
                         <li id="kwh"></li>
-                        <li id="wh"></li>
+                        
 
 
                 </ul>
@@ -179,8 +178,8 @@
                         <li> LIGHT 9 </li>
                         <li> LIGHT 10 </li>
                         <li> LIGHT 11 </li>
-                        <li> LIGHT 12 </li>
-                        <li> LIGHT 13 </li>
+                        <li> LIGHT 12 </li> 
+	       
 
                 </ul>
 
@@ -205,7 +204,7 @@
                         <li id="lightFrom10"></li>
                         <li id="lightFrom11"></li>
                         <li id="lightFrom12"></li>
-			<li id="lightFrom13"></li>
+		
 
 
                 </ul>
@@ -229,7 +228,7 @@
                         <li id="lightUntil10"></li>
                         <li id="lightUntil11"></li>
                         <li id="lightUntil12"></li>
-                        <li id="lightUntil13"></li>
+                       
 
 
                 </ul>
@@ -253,7 +252,7 @@
                         <li id="lightStatus10"></li>
                         <li id="lightStatus11"></li>
                         <li id="lightStatus12"></li>
-                        <li id="lightStatus13"></li>
+                        
 
                 </ul>
 
@@ -266,9 +265,6 @@
 
     </div>
    
-
-
-   <div role="tabpanel" class="tab-pane fade" id="settings">eniu</div>
   </div>
 
 </div>
@@ -301,11 +297,10 @@ $("#volt").text("Volts: " + data.volt);
 $("#current").text('Current: ' + data.current + " mA");
 $("#watt").text("Watts: " + data.watt);
 $("#kwh").text("Kwh: " + data.kwh);
-$("#wh").text("Wh: " + data.wh);
 $("#on").text("Light On: " + data.onLight);
 $("#off").text("Light Off: " + data.offLight);
 $("#temp").text("Current Temperature: " + data.temperature);
-$("#hum").text("Current Humiditye: " + data.humidity + "%");
+$("#hum").text("Current Humidity: " + data.humidity + "%");
 
 
 });
@@ -335,7 +330,7 @@ $("#lightFrom9").text(dataFrom.light9);
 $("#lightFrom10").text(dataFrom.light10);
 $("#lightFrom11").text(dataFrom.light11);
 $("#lightFrom12").text(dataFrom.light12);
-$("#lightFrom13").text(dataFrom.light13);
+
 
 $("#lightUntil1").text(dataFrom.lightUntil1);
 $("#lightUntil2").text(dataFrom.lightUntil2);
@@ -349,7 +344,7 @@ $("#lightUntil9").text(dataFrom.lightUntil9);
 $("#lightUntil10").text(dataFrom.lightUntil10);
 $("#lightUntil11").text(dataFrom.lightUntil11);
 $("#lightUntil12").text(dataFrom.lightUntil12);
-$("#lightUntil13").text(dataFrom.lightUntil13);
+
 
 $("#lightStatus1").text(dataFrom.status1);
 $("#lightStatus2").text(dataFrom.status2);
@@ -363,7 +358,7 @@ $("#lightStatus9").text(dataFrom.status9);
 $("#lightStatus10").text(dataFrom.status10);
 $("#lightStatus11").text(dataFrom.status11);
 $("#lightStatus12").text(dataFrom.status12);
-$("#lightStatus13").text(dataFrom.status13);
+
 
 });
 }

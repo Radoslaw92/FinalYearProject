@@ -61,6 +61,8 @@ pwm12 = GPIO.PWM(22,80)
 pwm12.start(0)
 lightOnCount = 0
 lightOnValue = 0
+timeOffset = 79005
+
 
 def powerConsuption():
     while True:
@@ -101,7 +103,8 @@ t1.start()
 
 #function to update database status and brightnes when timer time elapse or when timer is started
 def sendStatus(light, status):
-    
+   
+
     #"UPDATE status SET $light = '$status' WHERE ID = '1'"
     #sql = "UPDATE status SET light_" + lightToString + " = " + status + " WHERE ID = 1"
     sqlStatus = "UPDATE status SET light_" + str(light) + " = " + status + " WHERE ID = 1"
@@ -158,25 +161,29 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 else:    
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
                
-                #dtime = datetime.datetime.now() 
-                dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime 
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                dtime = datetime.datetime.now() 
+                #dtime = datetime.datetime.now() - timedelta(hours=1)
+
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
                 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
+                    print "i am in TIME START"
                     sendStatus(lightTurnOn, '1')  
                     pwm.ChangeDutyCycle(int(lightBrightness))
-
+                else: 
+                     pwm.ChangeDutyCycle(0)
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    print "I am in TIMER STOP"
                     resetTimer(lightTurnOn)
                     sendStatus(lightTurnOn, '0')
                     pwm.ChangeDutyCycle(0)
             
             #if brightness or status is selected on android app
-            if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
+            if (int(lightBrightness) > 0 and int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
                 pwm.ChangeDutyCycle(int(lightBrightness))
 
-        else: 
+        else:
+            #sendStatus(lightTurnOn, '0') 
             pwm.ChangeDutyCycle(0)
 
     elif lightTurnOn == 2:
@@ -191,21 +198,48 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 if timeUntil == '0':
                     timeUntilUnix = 0
                 else:
-                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' ))) + 3600
 
                 #dtime = datetime.datetime.now()
-                dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                dtime = datetime.datetime.now() 
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset + 3600
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm2.ChangeDutyCycle(int(lightBrightness))
+                #else:
+                    #pwm2.ChangeDutyCycle(0)
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
+                    print "time until string"
+                    print timeUntil
+                    print "CURRENT UNIX"
+                    print currentTimeUnix
+                    print "current string"
+                    print dtime
+                    print "CURRENT Until"
+                    print timeUntilUnix
+                    print "current until string"
+                    print timeUntil
                     resetTimer(lightTurnOn)
                     sendStatus(lightTurnOn, '0')
                     pwm2.ChangeDutyCycle(0)
+                else:
+                    print " "
+                    print"SIEMA ENIU"
+                    print "time until from batabase"
+                    print timeUntil
+                    print "CURRENT time UNIX"
+                    print currentTimeUnix
+                    print "time Until from database"
+                    print timeUntilUnix
+                    print "current string"
+                    print dtime
+                    print "CURRENT Until"
+                    print timeUntilUnix
+                    print "current until string"
+                    print timeUntil
+ 
 
             #if brightness or status is selected on android app
             if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
@@ -229,12 +263,13 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm3.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm3.ChangeDutyCycle(0)
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -263,12 +298,13 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm4.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm4.ChangeDutyCycle(0)
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -297,12 +333,13 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm5.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm5.ChangeDutyCycle(0)
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -331,12 +368,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm6.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm6.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -366,12 +406,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm7.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm7.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -401,12 +444,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm8.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm8.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -435,12 +481,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm9.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm9.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -469,12 +518,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm10.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm10.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -503,12 +555,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm11.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm11.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)
@@ -537,12 +592,15 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                print dtime
-                currentTimeUnix = time.mktime(dtime.timetuple())
+                
+                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
                     pwm12.ChangeDutyCycle(int(lightBrightness))
+                else:
+                    pwm12.ChangeDutyCycle(0)
+
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
                     resetTimer(lightTurnOn)

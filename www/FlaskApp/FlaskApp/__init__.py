@@ -51,7 +51,7 @@ def dataFrom():
         statusIntArray = []
         statusStringArray = []
         db_session = scoped_session(sessionmaker(bind=engineFrom))
-        resultFrom = db_session.query(timeFrom.light_1, timeFrom.light_2, timeFrom.light_3, timeFrom.light_4, timeFrom.light_5, timeFrom.light_6, timeFrom.light_7, timeFrom.light_8, timeFrom.light_9, timeFrom.light_10, timeFrom.light_11, timeFrom.light_12, timeFrom.light_13)
+        resultFrom = db_session.query(timeFrom.light_1, timeFrom.light_2, timeFrom.light_3, timeFrom.light_4, timeFrom.light_5, timeFrom.light_6, timeFrom.light_7, timeFrom.light_8, timeFrom.light_9, timeFrom.light_10, timeFrom.light_11, timeFrom.light_12)
         #return jsonify(result)
         for r in resultFrom: 
             light1 = r.light_1
@@ -66,11 +66,11 @@ def dataFrom():
             light10 = r.light_10
             light11 = r.light_11
             light12 = r.light_12
-            light13 = r.light_13
+            
         #db_session.close()
-        #return jsonify({'light1' : light1, 'light2' : light2, 'light3' : light3, 'light4' : light4, 'light5' : light5, 'light6' : light6, 'light7' : light7,'light8' : light8, 'light9' : light9, 'light10' : light10, 'light11' : light11, 'light12' : light12, 'light13' : light13,})
+        #return jsonify({'light1' : light1, 'light2' : light2, 'light3' : light3, 'light4' : light4, 'light5' : light5, 'light6' : light6, 'light7' : light7,'light8' : light8, 'light9' : light9, 'light10' : light10, 'light11' : light11, 'light12' : light12,})
 
-        resultUntil = db_session.query(timeUntil.light_1, timeUntil.light_2, timeUntil.light_3, timeUntil.light_4, timeUntil.light_5, timeUntil.light_6, timeUntil.light_7, timeUntil.light_8, timeUntil.light_9, timeUntil.light_10, timeUntil.light_11, timeUntil.light_12, timeUntil.light_13)
+        resultUntil = db_session.query(timeUntil.light_1, timeUntil.light_2, timeUntil.light_3, timeUntil.light_4, timeUntil.light_5, timeUntil.light_6, timeUntil.light_7, timeUntil.light_8, timeUntil.light_9, timeUntil.light_10, timeUntil.light_11, timeUntil.light_12)
         for r in resultUntil:
             lightUntil1 = r.light_1
             lightUntil2 = r.light_2
@@ -84,9 +84,9 @@ def dataFrom():
             lightUntil10 = r.light_10
             lightUntil11 = r.light_11
             lightUntil12 = r.light_12
-            lightUntil13 = r.light_13
+            
 
-        resultStatus = db_session.query(lightStatus.light_1, lightStatus.light_2, lightStatus.light_3, lightStatus.light_4, lightStatus.light_5, lightStatus.light_6, lightStatus.light_7, lightStatus.light_8, lightStatus.light_9, lightStatus.light_10, lightStatus.light_11, lightStatus.light_12, lightStatus.light_13)
+        resultStatus = db_session.query(lightStatus.light_1, lightStatus.light_2, lightStatus.light_3, lightStatus.light_4, lightStatus.light_5, lightStatus.light_6, lightStatus.light_7, lightStatus.light_8, lightStatus.light_9, lightStatus.light_10, lightStatus.light_11, lightStatus.light_12)
         for r in resultStatus:
             statusIntArray.append(r.light_1)
             statusIntArray.append(r.light_2)            
@@ -100,7 +100,7 @@ def dataFrom():
             statusIntArray.append(r.light_10)
             statusIntArray.append(r.light_11)
             statusIntArray.append(r.light_12)
-            statusIntArray.append(r.light_13)
+            
 
         db_session.close()
 
@@ -110,7 +110,7 @@ def dataFrom():
             elif statusIntArray[i] == '0':
                 statusStringArray.append('OFF')
 
-        return jsonify({'light1' : light1, 'light2' : light2, 'light3' : light3, 'light4' : light4, 'light5' : light5, 'light6' : light6, 'light7' : light7,'light8' : light8, 'light9' : light9, 'light10' : light10, 'light11' : light11, 'light12' : light12, 'light13' : light13, 'lightUntil1' : lightUntil1, 'lightUntil2' : lightUntil2, 'lightUntil3' : lightUntil3, 'lightUntil4' : lightUntil4, 'lightUntil5' : lightUntil5, 'lightUntil6' : lightUntil6, 'lightUntil7' : lightUntil7,'lightUntil8' : lightUntil8, 'lightUntil9' : lightUntil9, 'lightUntil10' : lightUntil10, 'lightUntil11' : lightUntil11, 'lightUntil12' : lightUntil12, 'lightUntil13' : lightUntil13, 'status1' : statusStringArray[0], 'status2' : statusStringArray[1], 'status3' : statusStringArray[2], 'status4' : statusStringArray[3], 'status5' : statusStringArray[4], 'status6' : statusStringArray[5], 'status7' : statusStringArray[6], 'status8' : statusStringArray[7], 'status9' : statusStringArray[8], 'status10' : statusStringArray[9], 'status11' : statusStringArray[10], 'status12' : statusStringArray[11], 'status13' : statusStringArray[12],})
+        return jsonify({'light1' : light1, 'light2' : light2, 'light3' : light3, 'light4' : light4, 'light5' : light5, 'light6' : light6, 'light7' : light7,'light8' : light8, 'light9' : light9, 'light10' : light10, 'light11' : light11, 'light12' : light12, 'lightUntil1' : lightUntil1, 'lightUntil2' : lightUntil2, 'lightUntil3' : lightUntil3, 'lightUntil4' : lightUntil4, 'lightUntil5' : lightUntil5, 'lightUntil6' : lightUntil6, 'lightUntil7' : lightUntil7,'lightUntil8' : lightUntil8, 'lightUntil9' : lightUntil9, 'lightUntil10' : lightUntil10, 'lightUntil11' : lightUntil11, 'lightUntil12' : lightUntil12, 'status1' : statusStringArray[0], 'status2' : statusStringArray[1], 'status3' : statusStringArray[2], 'status4' : statusStringArray[3], 'status5' : statusStringArray[4], 'status6' : statusStringArray[5], 'status7' : statusStringArray[6], 'status8' : statusStringArray[7], 'status9' : statusStringArray[8], 'status10' : statusStringArray[9], 'status11' : statusStringArray[10], 'status12' : statusStringArray[11],})
         #return  jsonify(result='siemaneczko')
     except Exception as e:
         return str(e)

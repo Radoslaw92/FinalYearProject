@@ -266,6 +266,17 @@ public class ActivityControlLights extends Activity{
             String bright = Integer.toString(brightnessLevel);
             String status = Integer.toString(onOff);
 
+            //set brightness to 100 when status is On and brightness is not set
+            if(onOff == 1 && brightnessLevel == 0)
+                bright = "100";
+            if((onOff == 0 && brightnessLevel > 0) && (timeFromSend == "0" && timeUntilSend == "0"))
+                status = "1";
+            if(onOff == 1 && (timeFromSend != "0" || timeUntilSend != "0"))
+                status = "0";
+            if((onOff == 0 && brightnessLevel == 0) && (timeFromSend != "0" || timeUntilSend != "0"))
+                bright = "100";
+
+
             params.add(new BasicNameValuePair("brightness",bright));
             params.add(new BasicNameValuePair("status",status));
             params.add(new BasicNameValuePair("Time_From",timeFromSend));
@@ -279,7 +290,7 @@ public class ActivityControlLights extends Activity{
 
 
 
-            JSONObject json = jsonRequest.makeHttpRequest("http://192.168.0.32/php/db_create.php", "POST", params);
+            JSONObject json = jsonRequest.makeHttpRequest("http://10.3.4.73/php/db_create.php", "POST", params);
 
             try {
                 int success = json.getInt("success");
