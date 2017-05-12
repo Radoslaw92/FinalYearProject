@@ -61,8 +61,8 @@ pwm12 = GPIO.PWM(22,80)
 pwm12.start(0)
 lightOnCount = 0
 lightOnValue = 0
-timeOffset = 79005
-
+humidity2 = 0
+temperature2 = 0
 
 def powerConsuption():
     while True:
@@ -73,7 +73,14 @@ def powerConsuption():
     
         humidity, temperature = Adafruit_DHT.read_retry(11, 4) 
         busVoltage = ina.getBusVoltage_V()
-    
+        
+        if humidity < 100:
+            humidity2 = humidity
+            temperature2 = temperature
+        else:
+            humidity = humidity2
+            temperature = temperature2 
+ 
         temp = 0
         lightOn = lightOnValue
         lightOff = 12 - lightOnValue
@@ -161,10 +168,10 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 else:    
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
                
-                dtime = datetime.datetime.now() 
+                dtime = datetime.datetime.now() + timedelta(hours=1) 
                 #dtime = datetime.datetime.now() - timedelta(hours=1)
 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
                 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     print "i am in TIME START"
@@ -198,11 +205,11 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 if timeUntil == '0':
                     timeUntilUnix = 0
                 else:
-                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' ))) + 3600
+                    timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
 
                 #dtime = datetime.datetime.now()
-                dtime = datetime.datetime.now() 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset + 3600
+                dtime = datetime.datetime.now()+ timedelta(hours=1) 
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -211,36 +218,10 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                     #pwm2.ChangeDutyCycle(0)
 
                 if currentTimeUnix >= timeUntilUnix and timeUntil != '0' and lightBrightness != '0':
-                    print "time until string"
-                    print timeUntil
-                    print "CURRENT UNIX"
-                    print currentTimeUnix
-                    print "current string"
-                    print dtime
-                    print "CURRENT Until"
-                    print timeUntilUnix
-                    print "current until string"
-                    print timeUntil
                     resetTimer(lightTurnOn)
                     sendStatus(lightTurnOn, '0')
                     pwm2.ChangeDutyCycle(0)
-                else:
-                    print " "
-                    print"SIEMA ENIU"
-                    print "time until from batabase"
-                    print timeUntil
-                    print "CURRENT time UNIX"
-                    print currentTimeUnix
-                    print "time Until from database"
-                    print timeUntilUnix
-                    print "current string"
-                    print dtime
-                    print "CURRENT Until"
-                    print timeUntilUnix
-                    print "current until string"
-                    print timeUntil
- 
-
+                
             #if brightness or status is selected on android app
             if (int(lightBrightness) > 0 or int(lightStatus) == 1) and (timeFrom == '0' and timeUntil == '0'):
                 pwm2.ChangeDutyCycle(int(lightBrightness))
@@ -263,7 +244,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -298,7 +279,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -333,7 +314,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
 
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -369,7 +350,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -407,7 +388,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -445,7 +426,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -482,7 +463,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -519,7 +500,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -556,7 +537,7 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                 #dtime = datetime.datetime.now()
                 dtime = datetime.datetime.now() + timedelta(hours=1)
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple())
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
@@ -591,9 +572,9 @@ def controlLight(lightBrightness, lightStatus, timeFrom, timeUntil, lightTurnOn)
                     timeUntilUnix = int(time.mktime(time.strptime(timeUntil, '%Y/%m/%d %H:%M:%S' )))
 
                 #dtime = datetime.datetime.now()
-                dtime = datetime.datetime.now() + timedelta(hours=1)
+                dtime = datetime.datetime.now() + timedelta(hours=1) 
                 
-                currentTimeUnix = time.mktime(dtime.timetuple()) + timeOffset
+                currentTimeUnix = time.mktime(dtime.timetuple()) 
 
                 if currentTimeUnix >= timeFromUnix and int(lightBrightness) > 0:
                     sendStatus(lightTurnOn, '1')
